@@ -13,6 +13,7 @@ Although both devices are configured to transmit and receive (as their functiona
 * Parts
 * Wiring Diagrams
 * Code
+  * Uses [NMEA GPS commands](https://cdn-shop.adafruit.com/datasheets/PMTK_A11.pdf)
 * Deployment Setup
 
 // TODO

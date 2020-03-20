@@ -3,6 +3,7 @@ from digitalio import DigitalInOut, Direction, Pull
 import board
 import adafruit_ssd1306
 import adafruit_rfm9x
+from gps import GPS
 
 # Initialize I2C bus
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -56,7 +57,8 @@ def init():
 
 if __name__ == "__main__":
     init()
-
+    gps = GPS()
+    gps.track()
     try:
         while True:
             try:
