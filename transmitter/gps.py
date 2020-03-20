@@ -10,16 +10,12 @@ Device:
 
 import time
 import board
-import busio
 import adafruit_gps
+import serial
 
 class GPS:
     def __init__(self):
-        # Use default RPI 3 Model B TX/RX GPIO pins
-        RX_PIN = board.RX # GPIO 15
-        TX_PIN = board.TX # GPIO 14
-        
-        self.uart = busio.UART(TX_PIN, RX_PIN, baudrate=9600, timeout=600)
+        self.uart = serial.Serial("/dev/ttyS0", baudrate=9600, timeout=600)
         self.gps = adafruit_gps.GPS(self.uart)
         self.init_gps()
 
@@ -65,5 +61,6 @@ class GPS:
                     continue
 
                 # GPS has a fix and is ready to report data
-                print("Latitude: {}".format(self.gps.latitude))
-                print("Longitude: {}".format(self.gps.longitude))
+                # print("Latitude: {}".format(self.gps.latitude))
+                # print("Longitude: {}".format(self.gps.longitude))
+                yield self.gps

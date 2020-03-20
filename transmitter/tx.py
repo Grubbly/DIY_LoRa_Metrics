@@ -36,13 +36,12 @@ def set_display(text):
     display.show()
 
 def send_gps(gps):
-    data = bytes("Stuff")
+    data = bytes("{:.6f},{:.6f}".format(gps.latitude, gps.longitude), encoding='utf8')
     lora_radio.send(data)
 
 def display_gps(gps):
-    display_text = "GPS"
+    display_text = "{:.6f},{:.6f}".format(gps.latitude, gps.longitude)
     set_display(display_text)
-    print(display_text)
 
 def setup_lora_radio():
     CS = DigitalInOut(board.CE1)
@@ -58,11 +57,27 @@ def init():
 if __name__ == "__main__":
     init()
     gps = GPS()
-    gps.track()
     try:
         while True:
             try:
-                pass
+                for gps_instance in gps.track():
+                    print("="*50)
+                    print("Latitude: {0:.6f} degrees".format(gps_instance.latitude))
+                    print("Longitude: {0:.6f} degrees".format(gps_instance.longitude))
+                    print("Fix quality: {}".format(gps_instance.fix_quality))
+                    if gps_instance.satellites is not None:
+                        print("# satellites: {}".format(gps_instance.satellites))
+                    if gps_instance.altitude_m is not None:
+                        print("Altitude: {} meters".format(gps_instance.altitude_m))
+                    if gps_instance.speed_knots is not None:
+                        print("Speed: {} knots".format(gps_instance.speed_knots))
+                    if gps_instance.track_angle_deg is not None:
+                        print("Track angle: {} degrees".format(gps_instance.track_angle_deg))
+                    print("="*50 + "\n")
+
+                    display_gps(gps_instance)
+                    send_gps(gps_instance)
+
             except RuntimeError as e:
                 print("Runtime error occured... continuing transmit loop:")
                 print("Exception message: ", e)
