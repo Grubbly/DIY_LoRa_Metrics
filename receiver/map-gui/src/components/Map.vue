@@ -1,35 +1,28 @@
 <template>
-  <div>
+  <center>
     <div>
-      <h2>Search and add a pin</h2>
-      <label>
-        <gmap-autocomplete
-          @place_changed="setPlace">
-        </gmap-autocomplete>
-        <button @click="addMarker">Add</button>
-      </label>
-      <br/>
-
+      <gmap-map
+        :center="center"
+        :zoom="12"
+        style="width:75%;  height: 800px;"
+      >
+        <gmap-marker
+          :key="index"
+          v-for="(m, index) in markers"
+          :position="m.position"
+          @click="center=m.position"
+        ></gmap-marker>
+      </gmap-map>
     </div>
-    <br>
-    <gmap-map
-      :center="center"
-      :zoom="12"
-      style="width:100%;  height: 400px;"
-    >
-      <gmap-marker
-        :key="index"
-        v-for="(m, index) in markers"
-        :position="m.position"
-        @click="center=m.position"
-      ></gmap-marker>
-    </gmap-map>
-  </div>
+  </center>
 </template>
 
 <script>
+
+import position_data from '../../test_data.json'
+
 export default {
-  name: "GoogleMap",
+  name: "Map",
   data() {
     return {
       // default to Montreal to keep it simple
@@ -41,26 +34,10 @@ export default {
     };
   },
 
-  mounted() {
-    this.geolocate();
-  },
-
   methods: {
     // receives a place object via the autocomplete component
     setPlace(place) {
       this.currentPlace = place;
-    },
-    addMarker() {
-      if (this.currentPlace) {
-        const marker = {
-          lat: this.currentPlace.geometry.location.lat(),
-          lng: this.currentPlace.geometry.location.lng()
-        };
-        this.markers.push({ position: marker });
-        this.places.push(this.currentPlace);
-        this.center = marker;
-        this.currentPlace = null;
-      }
     },
     geolocate: function() {
       navigator.geolocation.getCurrentPosition(position => {
@@ -70,6 +47,22 @@ export default {
         };
       });
     }
-  }
+  },
+
+  mounted() {
+    this.geolocate();
+
+    position_data.forEach(pos => {
+      const marker = {
+          lat: parseFloat(pos.lat),
+          lng: parseFloat(pos.long)
+        };
+        this.markers.push({ position: marker });
+        this.center = marker;
+        this.currentPlace = null;
+    });
+
+    console.log(position_data[0].lat)
+  },
 };
 </script>
