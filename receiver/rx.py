@@ -12,6 +12,7 @@ import adafruit_ssd1306
 import adafruit_rfm9x
 import json
 import datetime
+import os
 
 # Create the I2C interface.
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -39,6 +40,8 @@ FILENAME = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S.txt')
 with open(FILENAME, 'w') as touch:
     touch.write("[]")
 
+gui_locations =  open('./map-gui/test_data.json', 'a')
+
 def setup_lora_radio():
     CS = DigitalInOut(board.CE1)
     RESET = DigitalInOut(board.D25)
@@ -57,6 +60,7 @@ def log_coords(text):
         log_json.append(lat_long_data)
         with open("{}".format(FILENAME), 'w') as log_file:
             log_file.write(json.dumps(log_json))
+            gui_locations.write(json.dumps(log_json))
     
 
 if __name__ == "__main__":

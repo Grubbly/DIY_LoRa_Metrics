@@ -50,8 +50,6 @@ export default {
   },
 
   mounted() {
-    this.geolocate();
-
     position_data.forEach(pos => {
       const marker = {
           lat: parseFloat(pos.lat),
