@@ -4,6 +4,8 @@ import board
 import adafruit_ssd1306
 import adafruit_rfm9x
 from gps import GPS
+import datetime
+import logging
 
 # Initialize I2C bus
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -25,6 +27,15 @@ lora_radio.tx_power = 23
 
 display_change = True
 
+FORMAT = '%(asctime)-15s %(message)s'
+logging.basicConfig(
+    filename=str(datetime.datetime.now()).replace(" ","_"),
+    filemode='a',
+    format=FORMAT,
+    level=logging.DEBUG
+)
+logger = logging.getLogger('transmitter')
+
 def set_header_text():
     display.text('Tristan Van Cise', 19, 0, 1)
     display.text('- LoRa Transmitter -', 8, 10, 1)
@@ -38,6 +49,7 @@ def set_display(text):
 def send_gps(gps):
     data = bytes("{:.6f},{:.6f}".format(gps.latitude, gps.longitude), encoding='utf8')
     lora_radio.send(data)
+    logger.info("{:.6f},{:.6f}".format(gps.latitude, gps.longitude))
 
 def display_gps(gps):
     display_text = "{:.6f},{:.6f}".format(gps.latitude, gps.longitude)
